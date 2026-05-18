@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Respectech HR - Attendance Check-In</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            margin: 25px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .time-display {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .time-display .time {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            display: block;
+            margin: 5px 0;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            font-size: 11px;
+            color: #999;
+        }
+
+        .field-hint {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        input[disabled] {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="logo">🔐</div>
+        <div class="title">Daily Check-In</div>
+        <div class="subtitle">Respectech HR Intern Attendance</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="time-display">
+        <span>Current Time:</span>
+        <span class="time" id="currentTime">--:--:--</span>
+        <span style="font-size: 11px; color: #666;" id="currentDate">Loading...</span>
+    </div>
+
+    <div class="info-box">
+        ℹ️ <strong>Important:</strong> You can only submit attendance for yourself. Your phone number and ID must match our records.
+    </div>
+
+    <form id="attendanceForm">
+        <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input 
+                type="tel" 
+                id="phone" 
+                name="phone" 
+                placeholder="e.g., 08012345678"
+                pattern="[0-9]{11}"
+                required
+            >
+            <div class="field-hint">Enter your registered phone number (11 digits)</div>
+        </div>
+
+        <div class="form-group">
+            <label for="internId">Intern ID *</label>
+            <input 
+                type="text" 
+                id="internId" 
+                name="internId" 
+                placeholder="Your assigned ID"
+                required
+            >
+            <div class="field-hint">Check your onboarding email for your ID</div>
+        </div>
+
+        <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input 
+                type="text" 
+                id="fullName" 
+                name="fullName" 
+                placeholder="Auto-populated after verification"
+                disabled
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="company">Company</label>
+            <input 
+                type="text" 
+                id="company" 
+                name="company" 
+                placeholder="Auto-populated after verification"
+                disabled
+            >
+        </div>
+
+        <button type="button" class="button" onclick="verifyAndSubmit()">
+            ✓ Submit Attendance
+        </button>
+
+        <div class="message" id="message"></div>
+    </form>
+
+    <div class="footer">
+        <p>🔒 Only you can submit your own attendance</p>
+        <p style="margin-top: 8px;">Respectech HR © 2026</p>
+    </div>
+</div>
+
+<script>
+    // Configuration
+    const DEMO_MODE = true; // Set to false after connecting to Google Sheets
+    
+    let staffRegistry = [
+        // Demo data - will be replaced by Google Sheets data
+        { id: '1', name: 'Ikenna Prince Ikenga', phone: '7034582529', company: 'Servelead Humanitarian Initiative' },
+        { id: '2', name: 'Abashiya Gyusmen Esther', phone: '8136020416', company: 'Servelead Humanitarian Initiative' },
+        { id: '6', name: 'Abdusshakur Abdurrahman', phone: '9035899553', company: 'LaicosFarms' },
+        { id: '8', name: 'Adeyemo shifaw Bukola', phone: '8100951762', company: 'Respectech HR' },
+    ];
+
+    let submittedToday = {};
+
+    // Update time display
+    function updateTime() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-NG', { hour12: true });
+        const dateStr = now.toLocaleDateString('en-NG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('currentTime').textContent = timeStr;
+        document.getElementById('currentDate').textContent = dateStr;
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // Verify and submit
+    async function verifyAndSubmit() {
+        const phone = document.getElementById('phone').value.trim();
+        const internId = document.getElementById('internId').value.trim();
+
+        if (!phone || !internId) {
+            showMessage('❌ Please fill in all required fields.', 'error');
+            return;
+        }
+
+        if (phone.length !== 11 || !/^\d{11}$/.test(phone)) {
+            showMessage('❌ Phone number must be exactly 11 digits.', 'error');
+            return;
+        }
+
+        // Check if already submitted today
+        const today = new Date().toLocaleDateString('en-NG');
+        if (submittedToday[phone + internId] === today) {
+            showMessage('⚠️ You have already checked in today. See you tomorrow!', 'error');
+            return;
+        }
+
+        // Find staff in registry
+        const staff = staffRegistry.find(s => 
+            String(s.phone) === phone && String(s.id) === internId
+        );
+
+        if (!staff) {
+            showMessage('❌ Phone number and ID do not match our records. Please verify and try again.', 'error');
+            return;
+        }
+
+        // Auto-populate fields
+        document.getElementById('fullName').value = staff.name;
+        document.getElementById('company').value = staff.company;
+
+        // Mark as submitted today
+        submittedToday[phone + internId] = today;
+
+        // Show success
+        const now = new Date();
+        const time = now.toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        showMessage(`✅ Success! ${staff.name}, your attendance has been recorded at ${time}.`, 'success');
+
+        // Reset form after 2 seconds
+        setTimeout(() => {
+            resetForm();
+            document.getElementById('message').style.display = 'none';
+        }, 3000);
+    }
+
+    function showMessage(text, type) {
+        const msgEl = document.getElementById('message');
+        msgEl.innerHTML = text;
+        msgEl.className = `message ${type}`;
+    }
+
+    function resetForm() {
+        document.getElementById('attendanceForm').reset();
+        document.getElementById('fullName').value = '';
+        document.getElementById('company').value = '';
+        document.getElementById('phone').focus();
+    }
+
+    // Focus on phone input on load
+    window.addEventListener('load', () => {
+        document.getElementById('phone').focus();
+    });
+</script>
+
+</body>
+</html>
